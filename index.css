@@ -1,0 +1,174 @@
+/* Base styles for the application */
+@import url('https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700;800&display=swap');
+
+/* Ensure proper base styles */
+* {
+  margin: 0;
+  padding: 0;
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
+}
+
+body {
+  font-family: 'Outfit', sans-serif;
+  background-color: #f8fafc; /* light mode fallback */
+  color: #1e293b; /* light mode text */
+  line-height: 1.6;
+  min-height: 100vh;
+  overflow-x: hidden; /* Prevent horizontal scroll on mobile */
+}
+
+/* Dark mode styles */
+.dark body {
+  background-color: #020617; /* slate-950 */
+  color: #f1f5f9; /* slate-100 */
+}
+
+/* Root container - Critical for preventing blank screen */
+#root {
+  min-height: 100vh;
+  width: 100%;
+  background-color: #f8fafc; /* Always have a background */
+  color: #1e293b;
+}
+
+/* Dark mode root */
+.dark #root {
+  background-color: #020617;
+  color: #f1f5f9;
+}
+
+/* Mobile-specific improvements */
+@media (max-width: 768px) {
+  html {
+    font-size: 14px; /* Slightly smaller base font on mobile */
+  }
+  
+  /* Prevent zoom on input focus on iOS */
+  input[type="text"],
+  input[type="email"],
+  textarea,
+  select {
+    font-size: 16px !important;
+    -webkit-appearance: none;
+    appearance: none;
+    border-radius: 8px;
+  }
+  
+  /* Better mobile scrolling */
+  body {
+    -webkit-overflow-scrolling: touch;
+    -webkit-text-size-adjust: 100%;
+    -ms-text-size-adjust: 100%;
+  }
+  
+  /* Fix for mobile viewport height issues */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Better touch targets */
+  button, 
+  .btn,
+  a[role="button"] {
+    min-height: 44px;
+    min-width: 44px;
+  }
+  
+  /* Improve text readability */
+  .text-xs { font-size: 0.75rem; }
+  .text-sm { font-size: 0.875rem; }
+  .text-base { font-size: 1rem; }
+  .text-lg { font-size: 1.125rem; }
+  .text-xl { font-size: 1.25rem; }
+}
+
+/* Ensure consistent dark mode variables */
+:root {
+  --color-brand-900: #312e81;
+  --color-brand-400: #818cf8;
+  --color-accent-500: #ef4444;
+  --color-accent-600: #dc2626;
+  --color-light-bg: #f8fafc;
+  --color-dark-bg: #020617;
+  --color-dark-card: #0f172a;
+}
+
+/* Fix for potential white flash on dark mode */
+.dark {
+  color-scheme: dark;
+}
+
+/* Smooth transitions for theme switching */
+* {
+  transition: background-color 0.3s ease, border-color 0.3s ease;
+}
+
+/* Critical mobile fixes */
+@media (max-width: 768px) {
+  /* Prevent white flash on page load */
+  #root {
+    background-color: inherit;
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Ensure sections have proper backgrounds */
+  section {
+    background-color: inherit;
+    min-height: auto;
+  }
+  
+  /* Fix for Safari mobile viewport */
+  .min-h-screen {
+    min-height: 100vh;
+    min-height: -webkit-fill-available;
+  }
+  
+  /* Better contrast for mobile screens */
+  .text-slate-600 {
+    color: #475569 !important;
+  }
+  
+  .dark .text-slate-400 {
+    color: #94a3b8 !important;
+  }
+  
+  /* Improve mobile animations performance */
+  * {
+    -webkit-backface-visibility: hidden;
+    backface-visibility: hidden;
+    -webkit-perspective: 1000;
+    perspective: 1000;
+  }
+}
+
+/* Utility classes for mobile debugging */
+.debug-mobile {
+  border: 2px solid red !important;
+}
+
+.debug-mobile * {
+  border: 1px solid blue !important;
+}
+
+/* Force proper backgrounds for critical elements */
+body, 
+#root,
+.bg-light-bg,
+.bg-dark-bg {
+  background-color: #f8fafc !important;
+}
+
+.dark body,
+.dark #root,
+.dark .bg-light-bg,
+.dark .bg-dark-bg {
+  background-color: #020617 !important;
+}

@@ -1,5 +1,4 @@
 import React, { useState, useEffect } from 'react';
-import { createRoot } from 'react-dom/client';
 import { ScrollProgress } from './components/layout/ScrollProgress';
 import { Navbar } from './components/layout/Navbar';
 import { Footer } from './components/layout/Footer';
@@ -8,11 +7,16 @@ import { About } from './components/sections/About';
 import { Services } from './components/sections/Services';
 import { Stats } from './components/sections/Stats';
 import { Contact } from './components/sections/Contact';
+// import { MobileDebugPanel } from './utils/mobileDebug';
 
 /**
- * Main App Component
+ * Main App Component with Error Boundary
  */
 const App = () => {
+  useEffect(() => {
+    console.log('[App] mounted');
+    return () => console.log('[App] unmounted');
+  }, []);
   const [theme, setTheme] = useState(() => {
     // Default to dark mode to match reference, but respect saved preference
     if (typeof window !== 'undefined') {
@@ -36,10 +40,10 @@ const App = () => {
   };
 
   return (
-    <div className="antialiased min-h-screen font-sans selection:bg-accent-500/30 selection:text-accent-900 dark:selection:text-white">
+    <div className="antialiased min-h-screen w-full font-sans selection:bg-accent-500/30 selection:text-accent-900 dark:selection:text-white bg-slate-50 dark:bg-slate-950 text-slate-900 dark:text-slate-100 transition-colors duration-300">
       <ScrollProgress />
       <Navbar isDark={theme === 'dark'} toggleTheme={toggleTheme} />
-      <main>
+      <main className="w-full">
         <Hero />
         <About />
         <Services />
@@ -47,9 +51,9 @@ const App = () => {
         <Contact />
       </main>
       <Footer />
+      {/* <MobileDebugPanel /> */}
     </div>
   );
 };
 
-const root = createRoot(document.getElementById('root')!);
-root.render(<App />);
+export default App;

@@ -1,8 +1,8 @@
 <!DOCTYPE html>
-<html lang="en" class="scroll-smooth dark">
+<html lang="en" class="scroll-smooth dark" style="background-color: #020617; color: #f1f5f9;">
   <head>
     <meta charset="UTF-8" />
-    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=5.0, user-scalable=yes" />
     <title>Universal Acutrials | Strategic Consulting</title>
     <meta name="description" content="Universal Acutrials - Premium Consulting Firm" />
     
@@ -120,24 +120,62 @@
       }
       
       body {
-        @apply bg-light-bg dark:bg-dark-bg text-light-text dark:text-white transition-colors duration-300;
+        background-color: #f8fafc;
+        color: #1e293b;
+        transition: background-color 0.3s ease, color 0.3s ease;
+      }
+      .dark body {
+        background-color: #020617;
+        color: #f1f5f9;
       }
     </style>
-  <script type="importmap">
-{
-  "imports": {
-    "react/": "https://aistudiocdn.com/react@^19.2.0/",
-    "react": "https://aistudiocdn.com/react@^19.2.0",
-    "framer-motion": "https://aistudiocdn.com/framer-motion@^12.23.24",
-    "lucide-react": "https://aistudiocdn.com/lucide-react@^0.554.0",
-    "react-dom/": "https://aistudiocdn.com/react-dom@^19.2.0/"
-  }
-}
-</script>
 <link rel="stylesheet" href="/index.css">
 </head>
-  <body>
-    <div id="root"></div>
-    <script type="module" src="/index.tsx"></script>
+  <body style="margin: 0; background-color: #020617; color: #f1f5f9;">
+    <div id="root" style="min-height: 100vh; background-color: #020617; color: #f1f5f9;">
+      <!-- Loading state to prevent blank screen -->
+      <div id="initial-loader" style="
+        position: fixed; 
+        top: 0; 
+        left: 0; 
+        width: 100%; 
+        height: 100%; 
+        background-color: #020617; 
+        color: #f1f5f9; 
+        display: flex; 
+        align-items: center; 
+        justify-content: center;
+        z-index: 9999;
+        font-family: 'Outfit', sans-serif;
+      ">
+        <div style="text-align: center;">
+          <div style="font-size: 1.5rem; font-weight: bold; margin-bottom: 1rem;">Universal Actuaries</div>
+          <div style="width: 40px; height: 40px; border: 3px solid #ef4444; border-top: 3px solid transparent; border-radius: 50%; animation: spin 1s linear infinite; margin: 0 auto;"></div>
+        </div>
+      </div>
+    </div>
+    
+    <style>
+      @keyframes spin {
+        0% { transform: rotate(0deg); }
+        100% { transform: rotate(360deg); }
+      }
+    </style>
+    
+  <script type="module" src="/src/main.tsx"></script>
+    
+    <!-- Remove loader once React app loads -->
+    <script>
+      window.addEventListener('load', function() {
+        setTimeout(function() {
+          const loader = document.getElementById('initial-loader');
+          if (loader) {
+            loader.style.opacity = '0';
+            loader.style.transition = 'opacity 0.3s ease';
+            setTimeout(() => loader.remove(), 300);
+          }
+        }, 500);
+      });
+    </script>
   </body>
 </html>

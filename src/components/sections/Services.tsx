@@ -58,7 +58,7 @@ export const Services = () => {
   ];
 
   return (
-    <section ref={ref} id="services" className="py-24 min-h-screen flex flex-col justify-center snap-start bg-slate-50 dark:bg-[#01040f] relative border-t border-slate-200 dark:border-white/5 transition-colors duration-300 overflow-hidden">
+    <section ref={ref} id="services" className="py-24 min-h-screen flex flex-col justify-center snap-start bg-slate-100 dark:bg-slate-900 relative border-t border-slate-200 dark:border-white/5 transition-colors duration-300 overflow-hidden">
       {/* Background Parallax Typography */}
     {!disableParallax && (
     <div className="absolute top-20 left-0 w-full overflow-hidden pointer-events-none opacity-[0.03] dark:opacity-[0.05]">

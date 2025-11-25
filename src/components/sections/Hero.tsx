@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useMemo } from 'react';
 import { motion, useScroll, useTransform, AnimatePresence } from 'framer-motion';
 import { useIsMobile, useShouldReduceMotion } from '../../utils/useDevice';
 import { optimizeImage } from '../../utils/imageUtils';
@@ -10,23 +10,32 @@ import { ArrowRight, TrendingUp, ShieldCheck, FileText } from 'lucide-react';
 export const Hero = () => {
   const isMobile = useIsMobile();
   const shouldReduce = useShouldReduceMotion();
-  const disableParallax = isMobile || shouldReduce;
-  const { scrollY } = disableParallax ? { scrollY: null } as any : useScroll();
-  // Enhanced Parallax Effects
-  let y1: any = 0;
-  let y2: any = 0;
-  let yBg: any = 0;
-  let xBg: any = 0;
-  let opacity: any = 1;
-  let scale: any = 1;
-  if (!disableParallax) {
-    y1 = useTransform(scrollY, [0, 500], [0, 200]);
-    y2 = useTransform(scrollY, [0, 500], [0, -150]);
-    yBg = useTransform(scrollY, [0, 1000], [0, 300]);
-    xBg = useTransform(scrollY, [0, 1000], [0, -100]);
-    opacity = useTransform(scrollY, [0, 300], [1, 0]);
-    scale = useTransform(scrollY, [0, 300], [1, 0.95]);
-  }
+  // TEMP: Force parallax disabled globally while diagnosing desktop blank screen.
+  const disableParallax = true; // isMobile || shouldReduce; <-- original logic preserved below for restoration
+  // Always obtain scrollY so we never have null when switching from mobile -> desktop.
+  const { scrollY } = useScroll();
+  // Memoize motion values only when parallax enabled.
+  const { y1, y2, yBg, xBg, opacity, scale } = useMemo(() => {
+    if (disableParallax) {
+      return {
+        y1: 0,
+        y2: 0,
+        yBg: 0,
+        xBg: 0,
+        opacity: 1,
+        scale: 1
+      };
+    }
+    return {
+      y1: useTransform(scrollY, [0, 500], [0, 200]),
+      y2: useTransform(scrollY, [0, 500], [0, -150]),
+      yBg: useTransform(scrollY, [0, 1000], [0, 300]),
+      xBg: useTransform(scrollY, [0, 1000], [0, -100]),
+      opacity: useTransform(scrollY, [0, 300], [1, 0]),
+      scale: useTransform(scrollY, [0, 300], [1, 0.95])
+    };
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [disableParallax]);
   
   // Carousel State
   const [currentInsight, setCurrentInsight] = useState(0);
@@ -61,7 +70,12 @@ export const Hero = () => {
   }, []);
 
   return (
-    <section id="home" className="relative min-h-screen snap-start flex items-center pt-20 overflow-hidden bg-light-bg dark:bg-dark-bg transition-colors duration-300">
+    <section id="home" className="relative min-h-screen snap-start flex items-center pt-20 pb-10 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
+      {process.env.NODE_ENV === 'development' && (
+        <div className="fixed top-2 left-2 z-50 text-[10px] px-2 py-1 rounded bg-black/60 text-white font-mono">
+          Hero mounted | parallax: {String(!disableParallax)}
+        </div>
+      )}
       {/* Background Effects - Multi-directional Parallax */}
       <motion.div style={{ y: yBg, x: xBg }} className="absolute inset-0 z-0 pointer-events-none">
           {!disableParallax ? (
@@ -118,12 +132,12 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.2 }}
-            className="text-5xl md:text-7xl font-bold leading-tight text-slate-900 dark:text-white"
+            className="text-3xl sm:text-5xl md:text-7xl font-bold leading-tight text-slate-900 dark:text-white"
           >
-            Strategic <br />
-            <span className="text-brand-950 dark:text-slate-200">Precision.</span> <br/>
+            Offering a <br />
+            <span className="text-brand-950 dark:text-slate-200">Wide range of Actuarial </span> <br/>
             <span className="text-transparent bg-clip-text bg-gradient-to-r from-accent-600 to-brand-600 dark:from-accent-500 dark:to-brand-400">
-              Maximum Impact.
+            Services 
             </span>
           </motion.h1>
           
@@ -140,7 +154,7 @@ export const Hero = () => {
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: 0.6, delay: 0.6 }}
-            className="flex flex-wrap gap-4"
+            className="flex flex-col sm:flex-row flex-wrap gap-4"
           >
             <a href="#services" className="group px-8 py-4 bg-slate-900 dark:bg-white text-white dark:text-dark-bg font-bold rounded-md flex items-center gap-2 hover:bg-accent-600 dark:hover:bg-slate-200 transition-colors shadow-lg hover:shadow-accent-500/25">
               Explore Services
@@ -240,7 +254,7 @@ export const Hero = () => {
 
               {/* Floating Element 2 */}
               <motion.div 
-                style={{ y: useTransform(scrollY, [0, 500], [0, 50]) }}
+                style={{ y: disableParallax ? 0 : useTransform(scrollY, [0, 500], [0, 50]) }}
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 className="absolute -bottom-8 -left-8 w-64 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-4 rounded-xl shadow-xl z-20"

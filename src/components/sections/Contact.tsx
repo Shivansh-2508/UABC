@@ -11,7 +11,7 @@ export const Contact = () => {
   const shouldReduce = useShouldReduceMotion();
   const disableMotion = isMobile || shouldReduce;
   return (
-    <section id="contact" className="py-24 min-h-screen flex items-center snap-start bg-light-bg dark:bg-dark-bg relative overflow-hidden transition-colors duration-300">
+    <section id="contact" className="py-24 min-h-screen flex items-center snap-start bg-slate-50 dark:bg-slate-950 relative overflow-hidden transition-colors duration-300">
       <div className="container mx-auto px-6 relative z-10">
         <div className="bg-white dark:bg-[#050a18] border border-slate-200 dark:border-white/10 rounded-2xl p-8 md:p-16 overflow-hidden relative shadow-2xl transition-colors duration-300">
           
@@ -31,7 +31,7 @@ export const Contact = () => {
             </>
           )}
           
-          <div className="grid md:grid-cols-2 gap-16 relative z-10">
+          <div className="grid grid-cols-1 md:grid-cols-2 gap-12 md:gap-16 relative z-10">
             <div>
               <div className="inline-block px-3 py-1 bg-accent-500/10 border border-accent-500/20 text-accent-600 dark:text-accent-500 text-xs font-bold uppercase tracking-widest rounded-full mb-6">
                 Contact Us
@@ -78,7 +78,7 @@ export const Contact = () => {
             </div>
 
             <form className="space-y-6 p-8 bg-slate-50 dark:bg-white/5 rounded-xl border border-slate-200 dark:border-white/5 shadow-sm" onSubmit={(e) => e.preventDefault()}>
-              <div className="grid grid-cols-2 gap-6">
+              <div className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                 <div className="space-y-2">
                   <label className="text-xs font-bold text-slate-500 dark:text-slate-400 uppercase tracking-wider">First Name</label>
                   <input type="text" className="w-full bg-white dark:bg-dark-bg/50 border border-slate-200 dark:border-white/10 rounded-lg px-4 py-4 text-slate-900 dark:text-white focus:outline-none focus:border-accent-500 transition-colors" placeholder="John" />
