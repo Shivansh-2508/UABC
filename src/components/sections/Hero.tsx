@@ -46,19 +46,19 @@ export const Hero = () => {
     {
       category: "Market Analysis",
       title: "Navigating Volatility in 2024 Global Markets",
-      image: "https://images.unsplash.com/photo-1611974765270-ca12586343bb?auto=format&fit=crop&q=80&w=800",
+      image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
       date: "2 Days ago"
     },
     {
       category: "AI & Risk",
       title: "The Algorithmic Future of Insurance Underwriting",
-      image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
+      image: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=800",
       date: "1 Week ago"
     },
     {
       category: "Sustainability",
       title: "Green Bonds: A Strategic Asset for Growth",
-      image: "https://images.unsplash.com/photo-1518133910546-b6c2fb7d79e3?auto=format&fit=crop&q=80&w=800",
+      image: "https://images.unsplash.com/photo-1620712943543-bcc4688e7485?auto=format&fit=crop&q=80&w=800",
       date: "2 Weeks ago"
     }
   ];
