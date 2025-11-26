@@ -5,6 +5,7 @@ import { Footer } from './components/layout/Footer';
 import { Hero } from './components/sections/Hero';
 import { About } from './components/sections/About';
 import { Services } from './components/sections/Services';
+import { Partners } from './components/sections/Partners';
 import { Stats } from './components/sections/Stats';
 import { Contact } from './components/sections/Contact';
 // import { MobileDebugPanel } from './utils/mobileDebug';
@@ -43,6 +44,7 @@ const App = () => {
         <Hero />
         <About />
         <Services />
+        <Partners />
         <Stats />
         <Contact />
       </main>
