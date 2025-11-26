@@ -12,15 +12,23 @@ export const About = () => {
   const isMobile = useIsMobile();
   const shouldReduce = useShouldReduceMotion();
   const disableParallax = isMobile || shouldReduce;
-  const { scrollYProgress } = disableParallax ? { scrollYProgress: null } as any : useScroll({ target: ref, offset: ["start end", "end start"] });
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
   
-  // Parallax effect for the image column
-  const yImage = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [100, -100]);
-  const yContent = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [0, -50]);
+  // Always create transforms (hooks must be unconditional)
+  const yImageTransform = useTransform(scrollYProgress, [0, 1], [100, -100]);
+  const yContentTransform = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const xContentTransform = useTransform(scrollYProgress, [0, 1], [-20, 20]);
+  const xImageTransform = useTransform(scrollYProgress, [0, 1], [20, -20]);
   
-  // Horizontal separation effect
-  const xContent = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [-20, 20]);
-  const xImage = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [20, -20]);
+  // Mobile-specific subtle horizontal parallax for depth
+  const xMobileContentTransform = useTransform(scrollYProgress, [0, 1], [-10, 10]);
+  const xMobileImageTransform = useTransform(scrollYProgress, [0, 1], [10, -10]);
+
+  // Select values based on parallax state
+  const yImage = disableParallax ? 0 : yImageTransform;
+  const yContent = disableParallax ? 0 : yContentTransform;
+  const xContent = disableParallax ? (isMobile ? xMobileContentTransform : 0) : xContentTransform;
+  const xImage = disableParallax ? (isMobile ? xMobileImageTransform : 0) : xImageTransform;
 
   return (
     <section ref={ref} id="about" className="py-24 min-h-screen flex items-center snap-start bg-slate-50 dark:bg-slate-950 relative transition-colors duration-300 overflow-hidden">
@@ -30,7 +38,7 @@ export const About = () => {
              style={{ y: yContent, x: xContent }}
              initial={{ opacity: 0, x: -50 }}
              whileInView={{ opacity: 1, x: 0 }}
-             viewport={{ once: true, margin: "-100px" }}
+             viewport={{ once: false, margin: "-100px" }}
              transition={{ duration: 0.8 }}
           >
             <div className="text-accent-600 dark:text-accent-500 font-bold tracking-widest uppercase mb-4 text-sm">Who We Are</div>
@@ -52,7 +60,7 @@ export const About = () => {
                   key={i}
                   initial={{ opacity: 0, x: -20 }}
                   whileInView={{ opacity: 1, x: 0 }}
-                  viewport={{ once: true }}
+                  viewport={{ once: false }}
                   transition={{ delay: 0.1 * i }}
                   className="flex items-center gap-3 text-slate-700 dark:text-slate-200 group"
                 >
@@ -67,7 +75,7 @@ export const About = () => {
             style={{ y: yImage, x: xImage }}
             initial={{ opacity: 0, scale: 0.95 }}
             whileInView={{ opacity: 1, scale: 1 }}
-            viewport={{ once: true }}
+            viewport={{ once: false }}
             transition={{ duration: 1, ease: "easeOut" }}
             className="relative"
           >

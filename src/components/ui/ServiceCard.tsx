@@ -32,7 +32,7 @@ export const ServiceCard = ({ icon: Icon, title, description, delay }: ServiceCa
     <motion.div
       initial={{ opacity: 0, y: 30 }}
       whileInView={{ opacity: 1, y: 0 }}
-      viewport={{ once: true }}
+      viewport={{ once: false }}
       transition={{ delay, duration: 0.5 }}
       whileHover={isMobile ? undefined : { y: -8 }}
   onMouseMove={isMobile ? undefined : handleMouseMove}

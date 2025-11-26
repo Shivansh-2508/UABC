@@ -11,9 +11,17 @@ export const Stats = () => {
   const isMobile = useIsMobile();
   const shouldReduce = useShouldReduceMotion();
   const disableParallax = isMobile || shouldReduce;
-  const { scrollYProgress } = disableParallax ? { scrollYProgress: null } as any : useScroll({ target: ref, offset: ["start end", "end start"] });
-  const yBg = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [0, -100]);
-  const xBg = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [0, -50]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  
+  // Always create transforms (unconditional hooks)
+  const yBgTransform = useTransform(scrollYProgress, [0, 1], [0, -100]);
+  const xBgTransform = useTransform(scrollYProgress, [0, 1], [0, -50]);
+  // Mobile horizontal parallax for stat cards
+  const xMobileStatsTransform = useTransform(scrollYProgress, [0, 1], [0, 15]);
+  
+  const yBg = disableParallax ? 0 : yBgTransform;
+  const xBg = disableParallax ? 0 : xBgTransform;
+  const xMobileStats = isMobile ? xMobileStatsTransform : 0;
 
   return (
     <section ref={ref} className="py-24 snap-start bg-brand-900 dark:bg-brand-950/30 border-y border-brand-800 dark:border-white/5 relative overflow-hidden transition-colors duration-300">
@@ -26,7 +34,7 @@ export const Stats = () => {
        </motion.div>
        
       <div className="container mx-auto px-6 relative z-10">
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-12">
+        <motion.div className="grid grid-cols-2 md:grid-cols-4 gap-12" style={{ x: xMobileStats }}>
             {[
             { label: "Projects Completed", value: 1250, suffix: "+" },
             { label: "Client Satisfaction", value: 98, suffix: "%" },
@@ -37,7 +45,7 @@ export const Stats = () => {
               key={i} 
               initial={{ opacity: 0, y: 30 }}
               whileInView={{ opacity: 1, y: 0 }}
-              viewport={{ once: true }}
+              viewport={{ once: false }}
               transition={{ delay: i * 0.15, duration: 0.6 }}
               className="text-center group cursor-default"
             >
@@ -47,7 +55,7 @@ export const Stats = () => {
               <div className="text-brand-200 text-sm font-bold uppercase tracking-widest">{stat.label}</div>
             </motion.div>
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );

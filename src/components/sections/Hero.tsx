@@ -10,32 +10,35 @@ import { ArrowRight, TrendingUp, ShieldCheck, FileText } from 'lucide-react';
 export const Hero = () => {
   const isMobile = useIsMobile();
   const shouldReduce = useShouldReduceMotion();
-  // TEMP: Force parallax disabled globally while diagnosing desktop blank screen.
-  const disableParallax = true; // isMobile || shouldReduce; <-- original logic preserved below for restoration
+  // Disable vertical parallax on mobile, but keep subtle horizontal for depth
+  const disableParallax = isMobile || shouldReduce;
   // Always obtain scrollY so we never have null when switching from mobile -> desktop.
   const { scrollY } = useScroll();
-  // Memoize motion values only when parallax enabled.
-  const { y1, y2, yBg, xBg, opacity, scale } = useMemo(() => {
-    if (disableParallax) {
-      return {
-        y1: 0,
-        y2: 0,
-        yBg: 0,
-        xBg: 0,
-        opacity: 1,
-        scale: 1
-      };
-    }
-    return {
-      y1: useTransform(scrollY, [0, 500], [0, 200]),
-      y2: useTransform(scrollY, [0, 500], [0, -150]),
-      yBg: useTransform(scrollY, [0, 1000], [0, 300]),
-      xBg: useTransform(scrollY, [0, 1000], [0, -100]),
-      opacity: useTransform(scrollY, [0, 300], [1, 0]),
-      scale: useTransform(scrollY, [0, 300], [1, 0.95])
-    };
-  // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [disableParallax]);
+  
+  // Create motion values at component level (not inside useMemo—hooks can't be conditional)
+  const y1Transform = useTransform(scrollY, [0, 500], [0, 200]);
+  const y2Transform = useTransform(scrollY, [0, 500], [0, -150]);
+  const y2FloatingTransform = useTransform(scrollY, [0, 500], [0, 50]);
+  const yBgTransform = useTransform(scrollY, [0, 1000], [0, 300]);
+  const xBgTransform = useTransform(scrollY, [0, 1000], [0, -100]);
+  const opacityTransform = useTransform(scrollY, [0, 300], [1, 0]);
+  const scaleTransform = useTransform(scrollY, [0, 300], [1, 0.95]);
+  
+  // Mobile-specific subtle horizontal parallax
+  const xMobileContentTransform = useTransform(scrollY, [0, 400], [0, -15]);
+  const xMobileCardTransform = useTransform(scrollY, [0, 400], [0, 10]);
+
+  // Select values based on parallax state
+  const y1 = disableParallax ? 0 : y1Transform;
+  const y2 = disableParallax ? 0 : y2Transform;
+  const y2Floating = disableParallax ? 0 : y2FloatingTransform;
+  const yBg = disableParallax ? 0 : yBgTransform;
+  const xBg = disableParallax ? 0 : xBgTransform;
+  const opacity = disableParallax ? 1 : opacityTransform;
+  const scale = disableParallax ? 1 : scaleTransform;
+  // Mobile uses subtle horizontal shifts
+  const xMobileContent = isMobile ? xMobileContentTransform : 0;
+  const xMobileCard = isMobile ? xMobileCardTransform : 0;
   
   // Carousel State
   const [currentInsight, setCurrentInsight] = useState(0);
@@ -71,11 +74,6 @@ export const Hero = () => {
 
   return (
     <section id="home" className="relative min-h-screen snap-start flex items-center pt-20 pb-10 overflow-hidden bg-slate-50 dark:bg-slate-950 transition-colors duration-300">
-      {process.env.NODE_ENV === 'development' && (
-        <div className="fixed top-2 left-2 z-50 text-[10px] px-2 py-1 rounded bg-black/60 text-white font-mono">
-          Hero mounted | parallax: {String(!disableParallax)}
-        </div>
-      )}
       {/* Background Effects - Multi-directional Parallax */}
       <motion.div style={{ y: yBg, x: xBg }} className="absolute inset-0 z-0 pointer-events-none">
           {!disableParallax ? (
@@ -114,7 +112,7 @@ export const Hero = () => {
       </motion.div>
 
       <div className="container mx-auto px-6 relative z-10 grid md:grid-cols-2 gap-12 items-center">
-        <motion.div className="space-y-8" style={{ opacity, scale }}>
+        <motion.div className="space-y-8" style={{ opacity, scale, x: xMobileContent }}>
           <motion.div
             initial={{ opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
@@ -166,27 +164,27 @@ export const Hero = () => {
           </motion.div>
         </motion.div>
 
-        <div className="relative hidden md:block h-[600px] w-full perspective-1000">
+        <div className="relative h-[400px] md:h-[600px] w-full perspective-1000">
            {/* Geometric composition mimicking data/structure */}
            <motion.div
-             style={{ y: y1, rotate: -2 }}
+             style={{ y: y1, rotate: -2, x: xMobileCard }}
              initial={{ opacity: 0, scale: 0.9 }}
              animate={{ opacity: 1, scale: 1 }}
              transition={{ duration: 1.2, ease: "easeOut" }}
              className="relative w-full h-full"
            >
               {/* Main Card */}
-              <div className="absolute top-10 left-10 right-10 bottom-10 bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-2xl p-6 shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] z-10 hover:shadow-2xl transition-shadow duration-500 flex flex-col overflow-hidden">
-                 <div className="flex justify-between items-center mb-6 relative z-20">
-                    <div className="flex items-center gap-3">
-                       <div className="p-2 bg-brand-500/10 dark:bg-brand-500/20 rounded-lg border border-brand-500/20">
-                          <FileText className="text-brand-600 dark:text-brand-400 w-5 h-5" />
+              <div className="absolute top-5 left-5 right-5 bottom-5 md:top-10 md:left-10 md:right-10 md:bottom-10 bg-white/60 dark:bg-white/5 backdrop-blur-xl border border-white/20 dark:border-white/10 rounded-xl md:rounded-2xl p-3 md:p-6 shadow-lg md:shadow-[0_8px_32px_0_rgba(31,38,135,0.15)] z-10 hover:shadow-2xl transition-shadow duration-500 flex flex-col overflow-hidden">
+                 <div className="flex justify-between items-center mb-3 md:mb-6 relative z-20">
+                    <div className="flex items-center gap-1.5 md:gap-3">
+                       <div className="p-1 md:p-2 bg-brand-500/10 dark:bg-brand-500/20 rounded border border-brand-500/20">
+                          <FileText className="text-brand-600 dark:text-brand-400 w-3.5 h-3.5 md:w-5 md:h-5" />
                        </div>
-                       <span className="font-bold text-slate-800 dark:text-white text-sm uppercase tracking-wider">Latest Insights</span>
+                       <span className="font-semibold md:font-bold text-slate-800 dark:text-white text-[10px] md:text-sm uppercase tracking-wide md:tracking-wider">Insights</span>
                     </div>
                     <div className="flex gap-1">
                       {insights.map((_, idx) => (
-                        <div key={idx} className={`h-1.5 rounded-full transition-all duration-300 ${idx === currentInsight ? 'w-6 bg-accent-500' : 'w-1.5 bg-slate-300 dark:bg-white/20'}`} />
+                        <div key={idx} className={`h-1 md:h-1.5 rounded-full transition-all duration-300 ${idx === currentInsight ? 'w-4 md:w-6 bg-accent-500' : 'w-1 md:w-1.5 bg-slate-300 dark:bg-white/20'}`} />
                       ))}
                     </div>
                  </div>
@@ -208,24 +206,24 @@ export const Hero = () => {
                                 alt={insights[currentInsight].title}
                                 className="w-full h-full object-cover transition-transform duration-1000 group-hover:scale-110" 
                               />
-                          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/40 to-transparent opacity-90" />
+                          <div className="absolute inset-0 bg-gradient-to-t from-slate-900 via-slate-900/50 to-transparent opacity-80 md:opacity-90" />
                           
-                          <div className="absolute bottom-0 left-0 right-0 p-6 z-10">
+                          <div className="absolute bottom-0 left-0 right-0 p-3 md:p-6 z-10">
                              <motion.div 
                                initial={{ y: 20, opacity: 0 }}
                                animate={{ y: 0, opacity: 1 }}
                                transition={{ delay: 0.2 }}
                              >
-                               <div className="inline-block px-3 py-1 mb-3 text-[10px] font-bold uppercase tracking-widest text-white bg-accent-600 rounded-full shadow-lg shadow-accent-600/20">
+                               <div className="inline-block px-2 py-0.5 md:px-3 md:py-1 mb-2 md:mb-3 text-[8px] md:text-[10px] font-bold uppercase tracking-wider md:tracking-widest text-white bg-accent-600 rounded-full">
                                   {insights[currentInsight].category}
                                </div>
-                               <h3 className="text-xl md:text-2xl font-bold text-white leading-tight mb-3 drop-shadow-md">
+                               <h3 className="text-sm md:text-2xl font-bold text-white leading-snug md:leading-tight mb-2 md:mb-3 line-clamp-2">
                                   {insights[currentInsight].title}
                                </h3>
-                               <p className="text-slate-300 text-xs flex items-center gap-2 font-medium">
-                                  <span className="relative flex h-2 w-2">
+                               <p className="text-slate-300 text-[10px] md:text-xs flex items-center gap-1.5 md:gap-2 font-medium">
+                                  <span className="relative flex h-1.5 w-1.5 md:h-2 md:w-2">
                                     <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-green-400 opacity-75"></span>
-                                    <span className="relative inline-flex rounded-full h-2 w-2 bg-green-500"></span>
+                                    <span className="relative inline-flex rounded-full h-full w-full bg-green-500"></span>
                                   </span>
                                   {insights[currentInsight].date}
                                </p>
@@ -254,7 +252,7 @@ export const Hero = () => {
 
               {/* Floating Element 2 */}
               <motion.div 
-                style={{ y: disableParallax ? 0 : useTransform(scrollY, [0, 500], [0, 50]) }}
+                style={{ y: y2Floating }}
                 animate={{ y: [0, 10, 0] }}
                 transition={{ duration: 6, repeat: Infinity, ease: "easeInOut", delay: 1 }}
                 className="absolute -bottom-8 -left-8 w-64 bg-white dark:bg-dark-card border border-slate-200 dark:border-white/10 p-4 rounded-xl shadow-xl z-20"

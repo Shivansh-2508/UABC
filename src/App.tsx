@@ -13,10 +13,6 @@ import { Contact } from './components/sections/Contact';
  * Main App Component with Error Boundary
  */
 const App = () => {
-  useEffect(() => {
-    console.log('[App] mounted');
-    return () => console.log('[App] unmounted');
-  }, []);
   const [theme, setTheme] = useState(() => {
     // Default to dark mode to match reference, but respect saved preference
     if (typeof window !== 'undefined') {

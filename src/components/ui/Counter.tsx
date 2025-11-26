@@ -6,7 +6,7 @@ import { useInView } from 'framer-motion';
  */
 export const Counter = ({ from, to, duration = 2 }: { from: number, to: number, duration?: number }) => {
   const nodeRef = useRef<HTMLSpanElement>(null);
-  const isInView = useInView(nodeRef, { once: true, margin: "-100px" });
+  const isInView = useInView(nodeRef, { once: false, margin: "-100px" });
   
   useEffect(() => {
     if (!isInView || !nodeRef.current) return;

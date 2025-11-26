@@ -20,9 +20,15 @@ export const Services = () => {
   const isMobile = useIsMobile();
   const shouldReduce = useShouldReduceMotion();
   const disableParallax = isMobile || shouldReduce;
-  const { scrollYProgress } = disableParallax ? { scrollYProgress: null } as any : useScroll({ target: ref, offset: ["start end", "end start"] });
-  // Horizontal Typography Parallax
-  const xBgText = disableParallax ? 0 : useTransform(scrollYProgress, [0, 1], [300, -300]);
+  const { scrollYProgress } = useScroll({ target: ref, offset: ["start end", "end start"] });
+  
+  // Always create transform (unconditional hook)
+  const xBgTextTransform = useTransform(scrollYProgress, [0, 1], [300, -300]);
+  // Mobile horizontal parallax for service cards
+  const xMobileCardsTransform = useTransform(scrollYProgress, [0, 1], [0, -20]);
+  
+  const xBgText = disableParallax ? 0 : xBgTextTransform;
+  const xMobileCards = isMobile ? xMobileCardsTransform : 0;
 
   const services = [
     {
@@ -74,7 +80,7 @@ export const Services = () => {
         <motion.h2 
           initial={{ opacity: 0, y: disableParallax ? 5 : 20 }}
           whileInView={{ opacity: 1, y: 0 }}
-          viewport={{ once: true }}
+          viewport={{ once: false }}
           transition={{ duration: disableParallax ? 0.3 : 0.6 }}
           className="text-3xl md:text-5xl font-bold mb-4 text-slate-900 dark:text-white"
         >
@@ -94,7 +100,7 @@ export const Services = () => {
           </motion.a>
         </div>
 
-        <div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6">
+        <motion.div className="grid md:grid-cols-2 lg:grid-cols-3 gap-6" style={{ x: xMobileCards }}>
           {services.map((service, index) => (
             <ServiceCard 
               key={index}
@@ -104,7 +110,7 @@ export const Services = () => {
               delay={index * (disableParallax ? 0.05 : 0.1)}
             />
           ))}
-        </div>
+        </motion.div>
       </div>
     </section>
   );
